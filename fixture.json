@@ -1,0 +1,32 @@
+{
+  "node": "InventoryControl",
+  "action": "holdProduct",
+  "attempts-left": 2,
+  "nextNodeOnSuccess": {
+    "node": "ProductPayment",
+    "action": "processPayment",
+    "nextNodeOnSuccess": {
+      "node": "ShippingPaymentService",
+      "action": "processPayment",
+      "nextNodeOnSuccess": {
+        "node": "EndSaga"
+      },
+      "nextNodeOnFailure": {
+        "node": "ProductPaymentService",
+        "action": "revertPayment",
+        "nextNodeOnSuccess": {
+          "node": "InventoryControlService",
+          "action": "releaseProduct"
+        }
+      }
+    },
+    "nextNodeOnFailure": {
+      "node": "InventoryControlService",
+      "action": "releaseProduct"
+    }
+  },
+  "context": {
+    "first-name": "John",
+    "key" : "last-name"
+  }
+}
