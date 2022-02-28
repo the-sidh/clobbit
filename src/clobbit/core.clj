@@ -3,7 +3,6 @@
 (def unknown-outcome-exception-message "Unknown outcome for command execution. Aborting saga execution")
 (def no-defined-handler-for-failure-exception-message "The command failed and there isn't an action defined to handle the failure. Aborting saga execution")
 
-
 (defn- sugar-throw-exception
   [{:keys [node context]}
    message
@@ -22,11 +21,6 @@
   "asserts if the execution result was failure"
   [execution-result]
   (= {:outcome :failure} execution-result))
-
-(defn- execution-result-unknown?
-  "asserts if the execution result was unknown (not success or failure)"
-  [execution-result]
-  (not (contains? [:success :failure] execution-result)))
 
 (defn- state-on-success
   "returns an update state on case of the command's execution being considered as success, with the former :next-node-on-success as root node"
@@ -79,8 +73,8 @@
         new-state (cond
                     (execution-success? execution-result) (state-on-success state)
                     (execution-failure? execution-result) (state-on-failure state)
-                    (execution-result-unknown? execution-result) (sugar-throw-exception
-                                                                   state
-                                                                   unknown-outcome-exception-message
-                                                                   :unknown-outcome))]
+                    :else (sugar-throw-exception
+                            state
+                            unknown-outcome-exception-message
+                            :unknown-outcome))]
     (post-execution-state new-state)))
