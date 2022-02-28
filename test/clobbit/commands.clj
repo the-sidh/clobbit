@@ -2,17 +2,10 @@
   (:require [clojure.test :refer :all]))
 
 (defn hotel-room-booking [context]
-  {:outcome :success})
-
-(defn hotel-room-booking-failure [context]
-  {:outcome :failure})
-
-(defn hotel-room-booking-failure [context]
-  {:outcome :failure})
-
-(defn revert-hotel-room-booking [context]
-  {:outcome (:action-result context)})
+  {:outcome (get context :command-result)})
 
 (defn rent-car [context]
-  {:outcome (get context :action-result)})
+  {:outcome (get context :command-result)})
+
+(defn irrelevant [context])
 
