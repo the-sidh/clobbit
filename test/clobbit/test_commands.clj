@@ -1,4 +1,4 @@
-(ns clobbit.commands
+(ns clobbit.test-commands
   (:require [clojure.test :refer :all]))
 
 (defn hotel-room-booking [context]
@@ -8,4 +8,3 @@
   {:outcome (get context :command-result)})
 
 (defn irrelevant [context])
-

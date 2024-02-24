@@ -1,10 +1,14 @@
-(ns clobbit.core)
+(ns clobbit.core
+  (:require [clobbit.schema :as schema]
+            [clobbit.commands-container :as container]
+            [schema.core :as s]))
 
 (def unknown-outcome-exception-message "Unknown outcome for command execution. Aborting saga execution")
 (def no-defined-handler-for-failure-exception-message "The command failed and there isn't an action defined to handle the failure. Aborting saga execution")
 
-(defn- sugar-throw-exception
-  [{:keys [node context]}
+(s/defn sugar-throw-exception
+  [{:keys [node
+           context]}
    message
    cause]
   (throw (ex-info message
@@ -58,7 +62,7 @@
     state
     (merge state {:status :completed})))
 
-(defn execute
+(s/defn execute
   "Upon receiving a state representing the Saga execution, runs the current command and, according to it's result, returns a new state with the remaining steps
   Rules:
    - given that the execution was a success returns a new state with the supplied next-node-on-success as current node.
@@ -67,9 +71,11 @@
    - given that the execution outcome was :unknown throws an ExceptionInfo with node and context information.
    - given that there are no more nodes to be executed, the status is complete"
   [{:keys             [context]
-    {:keys [command]} :node
-    :as               state}]
-  (let [execution-result (run-command command context)
+    {:keys [description]} :node
+    :as               state} :- schema/State
+   commands-container
+   ]
+  (let [execution-result (run-command (container/command-from-container commands-container description) context)
         new-state (cond
                     (execution-success? execution-result) (state-on-success state)
                     (execution-failure? execution-result) (state-on-failure state)
