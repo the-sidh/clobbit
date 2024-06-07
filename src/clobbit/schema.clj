@@ -19,3 +19,6 @@
    (s/required-key :node)             Node
    (s/required-key :context)             s/Any
    } )
+
+(s/defschema ExecutionResult
+  {(s/required-key :outcome) (s/enum :success :failure :unknown)})

@@ -8,3 +8,6 @@
   {:outcome (get context :command-result)})
 
 (defn irrelevant [context])
+
+(defn broken [context]
+  (throw (ex-info "broken" {})))
